@@ -42,6 +42,37 @@ URLs above followed by `/mf-manifest.json`. Serve each remote's entire `dist`
 directory and allow cross-origin manifest requests from the host origin.
 Remote assets use an automatic public path based on their remote entry URL.
 
+### Cloudflare Workers deployment
+
+Each app includes a `wrangler.jsonc` that deploys its built `dist` directory as
+static assets. This explicit config skips Wrangler's automatic project setup,
+which can invoke npm and fail on pnpm's `catalog:` dependency references.
+
+Create a separate Workers Builds project for each app with these settings:
+
+| Root directory | Worker name | Build command | Deploy command |
+| --- | --- | --- | --- |
+| `apps/web` | `host-mfe` | `pnpm run build` | `pnpm exec wrangler deploy` |
+| `apps/catalog` | `catalog-mfe` | `pnpm run build` | `pnpm exec wrangler deploy` |
+| `apps/analytics` | `analytics-mfe` | `pnpm run build` | `pnpm exec wrangler deploy` |
+
+The Worker names in Cloudflare must match the corresponding config's `name`.
+Update the config names if your existing Workers use different names.
+Keep dependency installation on `pnpm install --frozen-lockfile`.
+
+Deploy the remotes first, then set `CATALOG_MANIFEST_URL` and
+`ANALYTICS_MANIFEST_URL` in the host's build environment to their deployed
+`/mf-manifest.json` URLs and rebuild the host. Both remotes include a public
+`_headers` file that allows cross-origin requests to their static assets.
+
+To validate an app's deployment config locally without uploading, build it and
+run Wrangler from the repository root with its explicit config, for example:
+
+```bash
+pnpm --filter @mf-manifest-handling/web run build
+pnpm --filter @mf-manifest-handling/web exec wrangler deploy --dry-run
+```
+
 Automatic federation type generation is disabled to keep builds independent
 of running remote servers. The host declares the exposed component contracts
 in `apps/web/src/remotes.d.ts`; update those declarations if remote props change.
