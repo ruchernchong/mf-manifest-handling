@@ -2,9 +2,18 @@
 
 ## Commands
 
+Run commands from the repository root. The React application lives in
+`apps/web`, including its Rsbuild and Rstest configs, assets, and tests.
+Add applications under `apps/*` and shared packages under `packages/*`.
+
 - `pnpm run dev` - Start the dev server
 - `pnpm run build` - Build the app for production
 - `pnpm run preview` - Preview the production build locally
+- `pnpm run typecheck` - Type-check workspace packages
+
+`build`, `test`, and `typecheck` run across workspace packages. `dev`,
+`preview`, and `test:watch` target `@mf-manifest-handling/web`.
+App build output is in `apps/web/dist`.
 
 ## Docs
 
