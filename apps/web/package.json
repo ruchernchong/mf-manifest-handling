@@ -28,6 +28,7 @@
     "@types/react-dom": "catalog:",
     "happy-dom": "catalog:",
     "typescript": "catalog:",
-    "@module-federation/enhanced": "catalog:"
+    "@module-federation/enhanced": "catalog:",
+    "wrangler": "catalog:"
   }
 }

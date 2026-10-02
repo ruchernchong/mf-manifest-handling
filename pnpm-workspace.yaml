@@ -20,8 +20,11 @@ catalog:
   "react": "19.3.0"
   "react-dom": "19.3.0"
   "typescript": "6.0.3"
+  "wrangler": "4.146.0"
 
-allowBuilds: {}
+allowBuilds:
+  esbuild: true
+  workerd: true
 
 savePrefix: ""
 
@@ -33,3 +36,5 @@ minimumReleaseAgeExclude:
   - '@turbo/windows-64@2.11.6'
   - '@turbo/windows-arm64@2.11.6'
   - turbo@2.11.6
+  - miniflare@5.20261001.0-alpha
+  - wrangler@4.146.0
