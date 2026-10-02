@@ -1,26 +1,20 @@
 body {
   margin: 0;
-  color: #fff;
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-  background-image: linear-gradient(to bottom, #020917, #101725);
+  color: #172033;
+  font-family: system-ui, sans-serif;
+  background: #f4f6fa;
 }
-
-.content {
-  display: flex;
-  min-height: 100vh;
-  line-height: 1.1;
-  text-align: center;
-  flex-direction: column;
-  justify-content: center;
+.host-content {
+  max-width: 1080px;
+  margin: auto;
+  padding: 48px 24px;
 }
-
-.content h1 {
-  font-size: 3.6rem;
-  font-weight: 700;
+.host-content h1 {
+  font-size: 2.5rem;
 }
-
-.content p {
-  font-size: 1.2rem;
-  font-weight: 400;
-  opacity: 0.5;
+.host-remotes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 24px;
+  margin-top: 32px;
 }

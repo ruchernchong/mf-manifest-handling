@@ -12,21 +12,22 @@
     "typecheck": "tsc --noEmit && tsc --noEmit -p tests/tsconfig.json"
   },
   "dependencies": {
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0"
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@rsbuild/core": "^2.2.11",
-    "@rsbuild/plugin-react": "^2.1.1",
-    "@rstest/adapter-rsbuild": "^0.12.2",
-    "@rstest/core": "^0.12.2",
-    "@testing-library/dom": "^10.4.2",
-    "@testing-library/jest-dom": "^7.0.1",
-    "@testing-library/react": "^16.3.3",
-    "@types/node": "^24.13.6",
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0",
-    "happy-dom": "^20.14.5",
-    "typescript": "^6.0.3"
+    "@rsbuild/core": "catalog:",
+    "@rsbuild/plugin-react": "catalog:",
+    "@rstest/adapter-rsbuild": "catalog:",
+    "@rstest/core": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "happy-dom": "catalog:",
+    "typescript": "catalog:",
+    "@module-federation/enhanced": "catalog:"
   }
 }

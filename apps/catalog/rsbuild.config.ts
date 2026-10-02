@@ -3,22 +3,23 @@ import { defineConfig } from '@rsbuild/core';
 import { pluginReact } from '@rsbuild/plugin-react';
 
 export default defineConfig({
-  plugins: [pluginReact({ reactCompiler: true })],
-  server: { port: 3000, strictPort: true },
-  html: { title: 'Module Federation Host' },
+  plugins: [pluginReact()],
+  server: { port: 3001, strictPort: true, cors: true },
+  dev: { assetPrefix: true },
+  output: { assetPrefix: 'auto' },
+  html: { title: 'Catalog MFE' },
   tools: {
     rspack: {
-      output: { uniqueName: 'host' },
+      output: { uniqueName: 'catalog' },
       plugins: [
         new ModuleFederationPlugin({
-          name: 'host',
+          name: 'catalog',
+          filename: 'remoteEntry.js',
           manifest: true,
           shareStrategy: 'loaded-first',
+          // Explicit host declarations keep builds independent of running remotes.
           dts: false,
-          remotes: {
-            catalog: `catalog@${process.env.CATALOG_MANIFEST_URL || 'http://localhost:3001/mf-manifest.json'}`,
-            analytics: `analytics@${process.env.ANALYTICS_MANIFEST_URL || 'http://localhost:3002/mf-manifest.json'}`,
-          },
+          exposes: { './App': './src/App.tsx' },
           shared: {
             react: { singleton: true, requiredVersion: '19.3.0' },
             'react-dom': { singleton: true, requiredVersion: '19.3.0' },
