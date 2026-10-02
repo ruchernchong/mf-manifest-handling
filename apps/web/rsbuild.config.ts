@@ -13,9 +13,11 @@ export default defineConfig({
         new ModuleFederationPlugin({
           name: 'host',
           manifest: true,
-          shareStrategy: 'loaded-first',
+          shareStrategy: 'version-first',
+          runtimePlugins: ['./src/fail-fast.ts'],
           dts: false,
           remotes: {
+            reports: `reports@${process.env.REPORTS_MANIFEST_URL || 'http://localhost:3003/mf-manifest.json'}`,
             catalog: `catalog@${process.env.CATALOG_MANIFEST_URL || 'http://localhost:3001/mf-manifest.json'}`,
             analytics: `analytics@${process.env.ANALYTICS_MANIFEST_URL || 'http://localhost:3002/mf-manifest.json'}`,
           },

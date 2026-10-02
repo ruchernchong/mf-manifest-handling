@@ -6,6 +6,7 @@ A pnpm monorepo with React apps built with Rsbuild and tasks managed by Turborep
 apps/
   analytics/           Analytics remote app
   catalog/             Catalog remote app
+  reports/             Reports remote loaded with loadRemote()
   web/                 Host MFE, public assets, build config, and integration tests
 biome.json             Workspace linting and formatting
 pnpm-workspace.yaml    Workspace package discovery and exact dependency catalog
@@ -20,23 +21,38 @@ Dependency versions are defined once in the default `catalog` in
 
 ## Micro-frontends
 
-All three applications register `ModuleFederationPlugin` directly from
+All four applications register `ModuleFederationPlugin` directly from
 `@module-federation/enhanced/rspack` through Rsbuild's `tools.rspack` option.
 
 | Application | Role | Local URL | Exposed module |
 | --- | --- | --- | --- |
-| `apps/web` | Host | http://localhost:3000 | Consumes both remotes |
+| `apps/web` | Host | http://localhost:3000 | Consumes three remotes |
 | `apps/catalog` | Remote | http://localhost:3001 | `catalog/App` |
 | `apps/analytics` | Remote | http://localhost:3002 | `analytics/App` |
+| `apps/reports` | Remote | http://localhost:3003 | `reports/App` |
 
-The host lazily imports the remote components through their `mf-manifest.json`
-files. Each remote also generates `remoteEntry.js` and can run independently.
-React and React DOM are shared singletons with `loaded-first` sharing, which
-avoids fetching unavailable remotes during host startup. Async bootstrap entries initialize
-the federation share scope before rendering. Each remote has its own loading
-and error boundary in the host, so one failed remote leaves the other usable.
+The host lazily imports catalog and analytics and uses `loadRemote('reports/App')`
+for reports. All remotes expose `./App` through their `mf-manifest.json` files.
+React and React DOM are shared singletons. The host uses `version-first` and a
+fail-fast runtime plugin for this crash POC: a missing manifest rejects shared
+dependency initialization before React mounts, so the entire host remains blank.
+Remote applications retain `loaded-first`. Each remote can also run independently.
 
-For deployments, set `CATALOG_MANIFEST_URL` and `ANALYTICS_MANIFEST_URL` when
+To reproduce an HTTP 404, run all servers with a nonexistent reports manifest:
+
+```bash
+REPORTS_MANIFEST_URL=http://localhost:3003/missing/mf-manifest.json pnpm run dev
+```
+
+The reports server disables HTML fallback so the missing JSON URL returns an
+actual HTTP 404 instead of the SPA HTML page.
+
+Open http://localhost:3000. The console should report the manifest error and the
+host should not mount. Restart with `pnpm run dev` (without the override) to load
+all three remotes successfully. This demonstrates startup failure, rather than
+an error caught by a mounted React boundary.
+
+For deployments, set `CATALOG_MANIFEST_URL`, `ANALYTICS_MANIFEST_URL`, and `REPORTS_MANIFEST_URL` when
 building the host to the full remote manifest URLs. They default to the local
 URLs above followed by `/mf-manifest.json`. Serve each remote's entire `dist`
 directory and allow cross-origin manifest requests from the host origin.
@@ -55,14 +71,15 @@ Create a separate Workers Builds project for each app with these settings:
 | `apps/web` | `host-mfe` | `pnpm run build` | `pnpm exec wrangler deploy` |
 | `apps/catalog` | `catalog-mfe` | `pnpm run build` | `pnpm exec wrangler deploy` |
 | `apps/analytics` | `analytics-mfe` | `pnpm run build` | `pnpm exec wrangler deploy` |
+| `apps/reports` | `reports-mfe` | `pnpm run build` | `pnpm exec wrangler deploy` |
 
 The Worker names in Cloudflare must match the corresponding config's `name`.
 Update the config names if your existing Workers use different names.
 Keep dependency installation on `pnpm install --frozen-lockfile`.
 
 Deploy the remotes first, then set `CATALOG_MANIFEST_URL` and
-`ANALYTICS_MANIFEST_URL` in the host's build environment to their deployed
-`/mf-manifest.json` URLs and rebuild the host. Both remotes include a public
+`ANALYTICS_MANIFEST_URL` and `REPORTS_MANIFEST_URL` in the host's build environment to their deployed
+`/mf-manifest.json` URLs and rebuild the host. All remotes include a public
 `_headers` file that allows cross-origin requests to their static assets.
 
 To validate an app's deployment config locally without uploading, build it and
@@ -77,7 +94,7 @@ Automatic federation type generation is disabled to keep builds independent
 of running remote servers. The host declares the exposed component contracts
 in `apps/web/src/remotes.d.ts`; update those declarations if remote props change.
 Component tests resolve remotes to local sources; browser verification covers
-manifest loading across the three servers.
+manifest loading across the four servers.
 
 ## Setup
 
@@ -90,7 +107,7 @@ pnpm install
 ## Get started
 
 Start all app dev servers. The web app is available at [http://localhost:3000](http://localhost:3000),
-with catalog on port 3001 and analytics on port 3002.
+with catalog on port 3001, analytics on port 3002, and reports on port 3003.
 
 ```bash
 pnpm run dev

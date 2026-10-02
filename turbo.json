@@ -4,12 +4,21 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "env": ["CATALOG_MANIFEST_URL", "ANALYTICS_MANIFEST_URL"],
+      "env": [
+        "CATALOG_MANIFEST_URL",
+        "ANALYTICS_MANIFEST_URL",
+        "REPORTS_MANIFEST_URL"
+      ],
       "outputs": ["dist/**"]
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": [
+        "CATALOG_MANIFEST_URL",
+        "ANALYTICS_MANIFEST_URL",
+        "REPORTS_MANIFEST_URL"
+      ]
     },
     "preview": {
       "dependsOn": ["build"],
