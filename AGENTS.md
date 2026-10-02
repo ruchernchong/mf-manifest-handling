@@ -1,5 +1,10 @@
 # AGENTS.md
 
+## Git workflow
+
+Commit directly to `main` for this project. Do not create branches unless the
+user explicitly requests one.
+
 ## Commands
 
 Run commands from the repository root. The React application lives in
