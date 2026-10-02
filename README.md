@@ -33,10 +33,13 @@ All four applications register `ModuleFederationPlugin` directly from
 
 The host lazily imports catalog and analytics and uses `loadRemote('reports/App')`
 for reports. All remotes expose `./App` through their `mf-manifest.json` files.
-React and React DOM are shared singletons. The host uses `version-first` and a
-fail-fast runtime plugin for this crash POC: a missing manifest rejects shared
-dependency initialization before React mounts, so the entire host remains blank.
-Remote applications retain `loaded-first`. Each remote can also run independently.
+React and React DOM are shared singletons. The host uses `loaded-first` to defer
+remote loading until components request it. The fail-fast runtime plugin rejects
+failed loads, allowing each mounted React boundary to show an unavailable message
+without taking down the host or healthy remotes. Each remote can also run independently.
+
+The broken startup POC is on `main`; `fix/manifest-startup` contains the resolution.
+See [the root cause analysis and resolution](docs/manifest-startup-rca.md).
 
 To reproduce an HTTP 404, run all servers with a nonexistent reports manifest:
 
@@ -47,10 +50,10 @@ REPORTS_MANIFEST_URL=http://localhost:3003/missing/mf-manifest.json pnpm run dev
 The reports server disables HTML fallback so the missing JSON URL returns an
 actual HTTP 404 instead of the SPA HTML page.
 
-Open http://localhost:3000. The console should report the manifest error and the
-host should not mount. Restart with `pnpm run dev` (without the override) to load
-all three remotes successfully. This demonstrates startup failure, rather than
-an error caught by a mounted React boundary.
+Open http://localhost:3000. The console should report the manifest error, while
+the host renders Catalog, Analytics, and a “Reports is unavailable” message.
+Restart with `pnpm run dev` (without the override) to load all three remotes
+successfully. On `main`, the same missing manifest prevents the host from mounting.
 
 For deployments, set `CATALOG_MANIFEST_URL`, `ANALYTICS_MANIFEST_URL`, and `REPORTS_MANIFEST_URL` when
 building the host to the full remote manifest URLs. They default to the local

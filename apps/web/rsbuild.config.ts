@@ -13,7 +13,8 @@ export default defineConfig({
         new ModuleFederationPlugin({
           name: 'host',
           manifest: true,
-          shareStrategy: 'version-first',
+          // Load remotes after React mounts so failures reach RemoteBoundary.
+          shareStrategy: 'loaded-first',
           runtimePlugins: ['./src/fail-fast.ts'],
           dts: false,
           remotes: {
