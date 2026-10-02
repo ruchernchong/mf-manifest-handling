@@ -1,6 +1,6 @@
 # MF manifest handling
 
-A pnpm monorepo with a React app built with Rsbuild.
+A pnpm monorepo with a React app built with Rsbuild and tasks managed by Turborepo.
 
 ```text
 apps/
@@ -8,6 +8,7 @@ apps/
 biome.json             Workspace linting and formatting
 pnpm-workspace.yaml    Workspace package discovery
 tsconfig.base.json     Shared TypeScript compiler options
+turbo.json             Workspace task dependencies and caching
 ```
 
 App dependencies live in `apps/web/package.json`. Shared tooling lives in the
@@ -35,7 +36,7 @@ Build the app for production:
 pnpm run build
 ```
 
-Preview the production build locally:
+Build and preview the applications locally:
 
 ```bash
 pnpm run preview
@@ -54,13 +55,11 @@ pnpm run test
 Use `pnpm run format` to format the workspace and `pnpm run test:watch` to
 watch the web app's tests.
 
-Root `build`, `test`, and `typecheck` commands run the corresponding scripts
-across workspace packages. Root `dev`, `preview`, and `test:watch` commands
-target the web app. You can also run app commands directly:
-
-```bash
-pnpm --filter @mf-manifest-handling/web run build
-```
+Root scripts use Turborepo to run tasks across workspace packages that define
+the corresponding script. Build, test, and typecheck results are cached; build
+artifacts in `dist` are restored on cache hits. `dev`, `preview`, and
+`test:watch` are persistent and uncached. `preview` builds applications first.
+Task configuration lives in `turbo.json`; local `.turbo` caches are ignored by Git.
 
 Add new applications under `apps/*` and shared packages under `packages/*`,
 each with its own `package.json` and applicable scripts. Use `workspace:*`
