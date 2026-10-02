@@ -1,0 +1,34 @@
+{
+  "name": "mf-manifest-handling",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "rsbuild build",
+    "check": "biome check --write",
+    "dev": "rsbuild",
+    "format": "biome format --write",
+    "preview": "rsbuild preview",
+    "test": "rstest",
+    "test:watch": "rstest --watch"
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.11",
+    "@rsbuild/core": "^2.2.11",
+    "@rsbuild/plugin-react": "^2.1.1",
+    "@rstest/adapter-rsbuild": "^0.12.2",
+    "@rstest/core": "^0.12.2",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@types/node": "^24.13.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "happy-dom": "^20.14.5",
+    "typescript": "^6.0.3"
+  }
+}
